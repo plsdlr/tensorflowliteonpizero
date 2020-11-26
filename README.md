@@ -14,7 +14,7 @@ Therefore this guide is seperated in four parts:
  3. Installing Wheels or using the precompiled Wheels
  4. Loading a model and testing tflite_runtime
 
- Of you want to skip the compilation:
+ If you want to skip the compilation:
 
 **The precompiled whl:  [tflite_runtime-2.5.0-cp37-cp37m-linux_armv6l.whl](https://github.com/plsdlr/tensorflowliteonpizero/releases/download/v.1.0/tflite_runtime-2.5.0-cp37-cp37m-linux_armv6l.whl)**
 
