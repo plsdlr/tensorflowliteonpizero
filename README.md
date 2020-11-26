@@ -18,7 +18,7 @@ Therefore this guide is seperated in four parts:
 
 **The precompiled whl:  [tflite_runtime-2.5.0-cp37-cp37m-linux_armv6l.whl](https://github.com/plsdlr/tensorflowliteonpizero/releases/download/v.1.0/tflite_runtime-2.5.0-cp37-cp37m-linux_armv6l.whl)**
 
-**The precompiled lib:  [libtensorflow-lite.a](https://github.com/plsdlr/tensorflowliteonpizero/releases/download/v1.0/libtensorflow-lite.a**
+**The precompiled lib:  [libtensorflow-lite.a](https://github.com/plsdlr/tensorflowliteonpizero/releases/download/v1.0/libtensorflow-lite.a)**
 
 **The precompiled minimalexample:  [minimal](https://github.com/plsdlr/tensorflowliteonpizero/releases/download/1.0/minimal)**
 
