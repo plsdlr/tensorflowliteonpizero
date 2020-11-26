@@ -10,8 +10,8 @@ Therefore this guide is seperated in four parts:
 
  0.  Preparation: Building the arm-linux-gnueabihf-g++ toolchain
  1. Compiling libtensorflow-lite.a and minimal
- 2. Building piwheel for tensorflow lite
- 3. Alternative: Using the precompiled Wheels
+ 2. Building bindings for tensorflow lite
+ 3. Installing Wheels or using the precompiled Wheels
  4. Loading a model and testing tflite_runtime
 
 
@@ -189,10 +189,11 @@ To get rid of this open the file in an editor of your choice and change line 199
 
       char abs_path[2048];
 
-[This is only tested by us]
+[This is only tested by us but just   
+affects the minimal and other c++ applications]
 
 
-## **2. Building piwheel for tensorflow lite**
+## **2. Building bindings for tensorflow lite**
 
 The goal here is to build tensorflow lite bindings for Python 3.7.3 on armv6. This has the advantage of not having to load the whole tensorflow libary but just the reduced tflite_runtime in python.
 
@@ -201,10 +202,33 @@ One way of doing this is via scp:
 
     scp -r yourtensorflowsoucefolder piusername@youpiip:/yourpathonpi
 
-The script which tensorflow provides searches for `linux_armv6l`  while the folder we compiled to is named `rpi_armv6`. Either rename or create a symlink.
+The script which tensorflow provides searches for `linux_armv6l`  while the folder we compiled to is named `rpi_armv6`. Either rename or create a symlink in `tensorflow/lite/tools/make/gen`
 
 After this run from the tensorflow source directory:
 
     ./tensorflow/lite/tools/pip_package/build_pip_package.sh
 
 You should now have a gen folder containing the wheels.
+
+## **3. Installing Wheels or using the precompiled Wheels**
+
+In the source folder:
+
+```
+pip3 install tflite_runtime-2.5.0-cp37-cp37m-linux_armv6l.whl
+```
+
+**Additional note 1:**
+this requires maybe libraries which need to be installed manually externally via apt-get install
+
+## **4. Loading a model and testing tflite_runtime**
+
+tflite_runtime is build without libatomic, which makes it nessesary to preload it:
+
+    LD_PRELOAD=/usr/lib/arm-linux-gnueabihf/libatomic.so.1.2.0 python3
+
+after this in the python interpreter:
+
+    from tflite_runtime.interpreter import Interpreter
+    interpretera = Interpreter("./yourmodel.tflite")
+    interpretera.get_tensor_details()
