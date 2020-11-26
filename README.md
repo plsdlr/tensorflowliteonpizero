@@ -144,7 +144,7 @@ cd ..
 Additional Note:
 If input now into your shell:
 ```
-arm-linux-gnueabihfg++
+arm-linux-gnueabihf-g++
 ```
 it should say something like:
 ```
