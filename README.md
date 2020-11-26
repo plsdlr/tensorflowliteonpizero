@@ -1,19 +1,24 @@
-## **Tensorflow lite on Raspberry Pi Zero - a comprehensive guide**
 
-This guide is written to help with crosscompilation and building Piwheels for tensorflow lite on Raspberry Pi Zero. The official tensorflow documentation seem to be out of date and also dosen't document how to build a  working crosscompilation toolchain. One warning: the whole process is quite time intensive. It was tested on **Ubuntu 18.04.5 LTS** and **Raspbian GNU/Linux 10 (buster)**. This repository also contains the precompiled *libtensorflow-lite.a* and *minimal* and the precompiled piwheel. If  you are lucky the piwheel might work out of the box. (jump to step 4)
+
+## **Tensorflow lite on Raspberry Pi Zero armv6 - a comprehensive guide**
+
+This guide is written to help with crosscompilation and building Piwheels for tensorflow lite on Raspberry Pi Zero. The official tensorflow documentation seem to be out of date and also dosen't document how to build a  working crosscompilation toolchain.  While libtensorflow-lite.a is available for armv6 , the python wrapper to it, i.e. tflite_runtime existed to our knowlege only for armv7 architectures. This guide shows therefore how to build libtensorflow-lite.a and the python wrapper for for armv6 achitecture.
+
+One warning: the whole process is quite time intensive. It was tested on **Ubuntu 18.04.5 LTS** and **Raspbian GNU/Linux 10 (buster)**. This repository also contains the precompiled *libtensorflow-lite.a* and *minimal* and the precompiled piwheel. If  you are lucky the piwheel might work out of the box. (jump to step 4)
 
 Therefore this guide is seperated in four parts:
 
- 1. Building the arm-linux-gnueabihf-g++ toolchain
- 2. Compiling libtensorflow-lite.a and minimal
- 3. Building piwheel for tensorflow lite
- 4. Alternative: Using the precompiled Wheels
+ 0.  Preparation: Building the arm-linux-gnueabihf-g++ toolchain
+ 1. Compiling libtensorflow-lite.a and minimal
+ 2. Building piwheel for tensorflow lite
+ 3. Alternative: Using the precompiled Wheels
+ 4. Loading a model and testing tflite_runtime
 
 
 
-## 1. Building arm-linux-gnueabihf-g++
+## Preparation: Building arm-linux-gnueabihf-g++
 
-This part of the guide is competly taken from [here](https://gist.github.com/sol-prog/94b2ba84559975c76111afe6a0499814). Give it a star if you use this.
+This part of the guide is completely taken from [here](https://gist.github.com/sol-prog/94b2ba84559975c76111afe6a0499814). Give it a star if you use this.
 
 **Sources:**
 
@@ -145,7 +150,7 @@ compilation terminated.
 ```
 That means that arm-linux-gnueabihfg++ is in path as it should be.
 
-## **Compiling libtensorflow-lite.a and minimal**
+## **1. Compiling libtensorflow-lite.a and minimal**
 
 1. Clone tensorflow:
 
@@ -164,6 +169,42 @@ cd tensorflow_src && ./tensorflow/lite/tools/make/download_dependencies.sh
 ./tensorflow/lite/tools/make/build_rpi_lib.sh TARGET_ARCH=armv6 TARGET_TOOLCHAIN_PREFIX=arm-linux-gnueabihf-  >errors.txt 2>&1
 ```
 (this will also pipe errors into a file called errors.txt in the same dictionary)
-After the process is finished check errors.txt and check ./tensorflow/lite/tools/make/gen/ .
-It should contain a folder called rpi_armv6 containing the three folders: bin, lib and obj.
+After the process is finished check errors.txt and check  `/tensorflow/lite/tools/make/gen/` . The folder should contain a folder called rpi_armv6 containing the three folders: bin, lib and obj.
 libtensorflow-lite.a can be used to build python wheels while minimal can run on the pi to load a model. (its basicly a tensorflow hello world in c++)
+
+**Additional note 1:**
+
+if something breaks during this compilation process the script is not cleaning the make folder. You have to do this manually before another attempt.
+
+    cd tensorflow/lite/tools/make
+    make cleanhistory
+
+**Additional note 2:**
+
+We encountered a strange error of an undefined reference in
+
+> tensorflow/lite/tools/make/downloads/flatbuffers/src/util.cpp
+
+To get rid of this open the file in an editor of your choice and change line 199 to:
+
+      char abs_path[2048];
+
+[This is only tested by us]
+
+
+## **2. Building piwheel for tensorflow lite**
+
+The goal here is to build tensorflow lite bindings for Python 3.7.3 on armv6. This has the advantage of not having to load the whole tensorflow libary but just the reduced tflite_runtime in python.
+
+Its possible to build the wheels on the pi zero itself with the previously compiled binarys. Therefore the simplest way is to transfer the whole tensorflow souce folder we have been working in on to the pi zero.
+One way of doing this is via scp:
+
+    scp -r yourtensorflowsoucefolder piusername@youpiip:/yourpathonpi
+
+The script which tensorflow provides searches for `linux_armv6l`  while the folder we compiled to is named `rpi_armv6`. Either rename or create a symlink.
+
+After this run from the tensorflow source directory:
+
+    ./tensorflow/lite/tools/pip_package/build_pip_package.sh
+
+You should now have a gen folder containing the wheels.
