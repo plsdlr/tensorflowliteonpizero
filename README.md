@@ -14,6 +14,9 @@ Therefore this guide is seperated in four parts:
  3. Installing Wheels or using the precompiled Wheels
  4. Loading a model and testing tflite_runtime
 
+ Of you want to skip the compilation:
+
+ **Release:  [tflite_runtime-2.5.0-cp37-cp37m-linux_armv6l.whl](https://github.com/plsdlr/tensorflowliteonpizero/archive/v.1.0.tar.gz)**
 
 
 ## Preparation: Building arm-linux-gnueabihf-g++
