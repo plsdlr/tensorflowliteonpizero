@@ -229,9 +229,9 @@ this requires maybe libraries which need to be installed manually externally via
 
 ## **4. Loading a model and testing tflite_runtime**
 
-tflite_runtime is build without libatomic, which makes it nessesary to preload it:
+tflite_runtime is build without libatomic, which makes it necessary to preload it. add this to your `.profile` file (and then reload it via `. ~/.profile`):
 
-    LD_PRELOAD=/usr/lib/arm-linux-gnueabihf/libatomic.so.1.2.0 python3
+    export LD_PRELOAD=/usr/lib/arm-linux-gnueabihf/libatomic.so.1.2.0 python3
 
 after this in the python interpreter:
 
